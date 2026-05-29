@@ -1,12 +1,24 @@
+import os
 import psycopg2
+
+# Carrega variáveis de ambiente do arquivo .env local se ele existir
+if os.path.exists('.env'):
+    with open('.env') as f:
+        for line in f:
+            if line.strip() and not line.strip().startswith('#'):
+                try:
+                    key, value = line.strip().split('=', 1)
+                    os.environ[key.strip()] = value.strip().strip('"').strip("'")
+                except ValueError:
+                    pass
 
 def conectar():
     return psycopg2.connect(
-        dbname="agenda",
-        user="postgres",
-        password="Developer123**",
-        host="localhost",
-        port="5432"
+        dbname=os.getenv("DB_NAME", "agenda"),
+        user=os.getenv("DB_USER", "postgres"),
+        password=os.getenv("DB_PASSWORD", ""),
+        host=os.getenv("DB_HOST", "localhost"),
+        port=os.getenv("DB_PORT", "5432")
     )
 
 def criar_tabela():
